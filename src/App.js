@@ -7,7 +7,10 @@ function App() {
   const [startShipSearch, setStartShipSearch] = useState('')
   const [startShipFound, setStartShipFound] = useState([])
 
-  const [startShipList, setStartShipList] = useState([])
+  const [starShipList, setStarShipList] = useState([])
+
+  const [starShipListSearch, setStarShipListSearch] = useState('')
+  const [starShipListFound, setStarShipListFound] = useState([])
   
 
   const handleChange = (e) => {
@@ -16,12 +19,17 @@ function App() {
   }
 
   const handleAdd = (e) => {
-    setStartShipList([...startShipList, e]);
+    setStarShipList([...starShipList, e]);
     setStartShipSearch('')
   }
 
   const handleDelete = (e) => {
-    setStartShipList(startShipList.filter(i => i !==e))
+    setStarShipList(starShipList.filter(i => i !==e))
+  }
+
+  const handleListChange = (e) => {
+    e.preventDefault();
+    setStarShipListSearch(e.target.value);
   }
 
   useEffect(() => {
@@ -30,7 +38,10 @@ function App() {
     .then(res => setStartShipFound(res.results))
   }, [startShipSearch])
 
-  
+  useEffect(() => {
+    setStarShipListFound(starShipList)
+  }, [starShipListSearch])
+  console.log(starShipListFound)
 
 
   return (
@@ -53,14 +64,19 @@ function App() {
         :'loading...'}
       </div>
       <div>
-        {startShipList.length > 0? 
-          startShipList.map((i) => {
+      <input
+        onChange={handleListChange}
+        value={starShipListSearch}
+        />
+        {starShipList.length > 0? 
+          starShipList.map((i) => {
            return ( <div>
             <p>{i}</p>
             <button onClick={() => {handleDelete(i)}}>Delete</button>
            </div>)
         }):
         'loading...'}
+        <button>Submit</button>
 
       </div>
       
