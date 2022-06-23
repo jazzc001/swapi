@@ -4,13 +4,15 @@ import React, {useState, useEffect} from 'react';
 
 
 function App() {
-  const [startShipSearch, setStartShipSearch] = useState('')
-  const [startShipFound, setStartShipFound] = useState([])
+  const [startShipSearch, setStartShipSearch] = useState('');
+  const [startShipFound, setStartShipFound] = useState([]);
 
   const [starShipList, setStarShipList] = useState([])
 
   const [starShipListSearch, setStarShipListSearch] = useState('')
-  const [starShipListFound, setStarShipListFound] = useState([])
+  const [filteredStartShip, setFilteredStartShip] = useState(starShipList)
+
+  const [submissionList, setSubmissionList] = useState([])
   
 
   const handleChange = (e) => {
@@ -24,12 +26,32 @@ function App() {
   }
 
   const handleDelete = (e) => {
-    setStarShipList(starShipList.filter(i => i !==e))
+    setStarShipList(starShipList.filter(i => i !== e))
   }
 
   const handleListChange = (e) => {
     e.preventDefault();
     setStarShipListSearch(e.target.value);
+  }
+
+  const submission = () => {
+    fetch('https://reqbin.com/echo/post/json', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        startShip: filteredStartShip
+      }),
+    })
+    .then(response => response.json())
+    .then((result) => setSubmissionList(result))
+    .catch((err) =>console.error('error :'+err))
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    submission()
   }
 
   useEffect(() => {
@@ -39,9 +61,12 @@ function App() {
   }, [startShipSearch])
 
   useEffect(() => {
-    setStarShipListFound(starShipList)
-  }, [starShipListSearch])
-  console.log(starShipListFound)
+    const newFilteredStarShips = starShipList.filter((ship) => {
+      return ship.includes(starShipListSearch)
+    })
+    setFilteredStartShip(newFilteredStarShips)
+  }, [starShipListSearch, starShipList])
+  
 
 
   return (
@@ -64,19 +89,23 @@ function App() {
         :'loading...'}
       </div>
       <div>
-      <input
-        onChange={handleListChange}
-        value={starShipListSearch}
-        />
-        {starShipList.length > 0? 
-          starShipList.map((i) => {
-           return ( <div>
-            <p>{i}</p>
-            <button onClick={() => {handleDelete(i)}}>Delete</button>
-           </div>)
-        }):
-        'loading...'}
-        <button>Submit</button>
+      <form method="post" onSubmit = {handleSubmit}>
+        <input
+          onChange={handleListChange}
+          value={starShipListSearch}
+          />
+          {filteredStartShip.length > 0? 
+            filteredStartShip.map((i) => {
+            return ( <div>
+              <p>{i}</p>
+              <button onClick={() => {handleDelete(i)}}>Delete</button>
+            </div>)
+          }):
+          'loading...'}
+        
+
+          <button type="submit" >Submit</button>
+        </form>
 
       </div>
       
