@@ -12,7 +12,6 @@ function App() {
   const [starShipListSearch, setStarShipListSearch] = useState('')
   const [filteredStartShip, setFilteredStartShip] = useState(starShipList)
 
-  const [submissionList, setSubmissionList] = useState([])
   
 
   const handleChange = (e) => {
@@ -40,13 +39,11 @@ function App() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        startShip: filteredStartShip
-      }),
+      body: JSON.stringify(filteredStartShip),
     })
     .then(response => response.json())
-    .then((result) => setSubmissionList(result))
-    .catch((err) =>console.error('error :'+err))
+    .then((result) => console.log(result))
+    .catch((err) =>console.log('error :'+err))
   }
 
   const handleSubmit = (e) => {
@@ -67,7 +64,6 @@ function App() {
     setFilteredStartShip(newFilteredStarShips)
   }, [starShipListSearch, starShipList])
   
-
 
   return (
     <div className="App">
